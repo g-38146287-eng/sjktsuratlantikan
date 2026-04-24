@@ -1,15 +1,7 @@
-<!-- /index.html -->
-<!-- GANTI bahagian paling bawah fail anda kepada ini -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="app.js"></script>
-</body>
-</html>
-
-<!-- /app.js -->
-const SUPABASE_URL = 'https://bsguhatzcxrxascrjqij.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_DQWcwhp5lYJIOdIXRpJtEA_Ltpq3IUQ';
-
-const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// /app.js
+const STORAGE_KEY = 'sjkt_kuala_lipis_surat_lantikan_final_v6';
+const GLOBAL_RUJ_KEY = 'sjkt_kuala_lipis_global_ruj_v6';
+const HEADER_SETTINGS_KEY = 'sjkt_kuala_lipis_header_settings_v6';
 
 const DEFAULT_TEACHERS = [
   'Pn. Nitya Sree A/P Dorai Singam',
@@ -72,7 +64,6 @@ const DEFAULT_POSITIONS = [
 let GLOBAL_RUJ = 'CBD3047.100.6/1/3( )';
 
 let headerSettings = {
-  id: null,
   leftLogo: '',
   rightLogo: '',
   schoolEmail: 'cbd3047@moe.edu.my',
@@ -87,6 +78,45 @@ const state = {
 };
 
 const el = (id) => document.getElementById(id);
+
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  localStorage.setItem(GLOBAL_RUJ_KEY, GLOBAL_RUJ);
+  localStorage.setItem(HEADER_SETTINGS_KEY, JSON.stringify(headerSettings));
+}
+
+function loadState() {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  const savedRuj = localStorage.getItem(GLOBAL_RUJ_KEY);
+  const savedHeader = localStorage.getItem(HEADER_SETTINGS_KEY);
+
+  if (savedRuj && savedRuj.trim()) {
+    GLOBAL_RUJ = savedRuj.trim();
+  }
+
+  if (savedHeader) {
+    try {
+      headerSettings = { ...headerSettings, ...JSON.parse(savedHeader) };
+    } catch (error) {}
+  }
+
+  if (raw) {
+    try {
+      const parsed = JSON.parse(raw);
+      state.teachers = Array.isArray(parsed.teachers) ? parsed.teachers : [];
+      state.positions = Array.isArray(parsed.positions) ? parsed.positions : [];
+      state.letters = parsed.letters && typeof parsed.letters === 'object' ? parsed.letters : {};
+    } catch (error) {}
+  }
+
+  if (!state.teachers.length) {
+    state.teachers = [...DEFAULT_TEACHERS];
+  }
+
+  if (!state.positions.length) {
+    state.positions = [...DEFAULT_POSITIONS];
+  }
+}
 
 function todayISO() {
   return new Date().toISOString().slice(0, 10);
@@ -114,134 +144,6 @@ function roman(num) {
   return values[num] || `${num}.`;
 }
 
-function showError(error, fallback = 'Ralat tidak diketahui.') {
-  console.error(error);
-  alert(error?.message || fallback);
-}
-
-function setButtonsDisabled(disabled) {
-  document.querySelectorAll('button').forEach((button) => {
-    button.disabled = disabled;
-  });
-}
-
-async function seedDefaultsIfNeeded() {
-  const { data: teacherRows, error: teacherError } = await supabaseClient
-    .from('teachers')
-    .select('name')
-    .limit(1);
-
-  if (teacherError) throw teacherError;
-
-  if (!teacherRows.length) {
-    const { error } = await supabaseClient
-      .from('teachers')
-      .upsert(DEFAULT_TEACHERS.map((name) => ({ name })), { onConflict: 'name' });
-
-    if (error) throw error;
-  }
-
-  const { data: positionRows, error: positionError } = await supabaseClient
-    .from('positions')
-    .select('name')
-    .limit(1);
-
-  if (positionError) throw positionError;
-
-  if (!positionRows.length) {
-    const { error } = await supabaseClient
-      .from('positions')
-      .upsert(DEFAULT_POSITIONS.map((name) => ({ name })), { onConflict: 'name' });
-
-    if (error) throw error;
-  }
-}
-
-async function loadRemoteData() {
-  const [
-    headerResult,
-    teachersResult,
-    positionsResult,
-    lettersResult,
-  ] = await Promise.all([
-    supabaseClient
-      .from('header_settings')
-      .select('*')
-      .order('updated_at', { ascending: false })
-      .limit(1)
-      .maybeSingle(),
-    supabaseClient
-      .from('teachers')
-      .select('name')
-      .order('name', { ascending: true }),
-    supabaseClient
-      .from('positions')
-      .select('name')
-      .order('name', { ascending: true }),
-    supabaseClient
-      .from('letters')
-      .select('*')
-      .order('teacher_name', { ascending: true }),
-  ]);
-
-  if (headerResult.error) throw headerResult.error;
-  if (teachersResult.error) throw teachersResult.error;
-  if (positionsResult.error) throw positionsResult.error;
-  if (lettersResult.error) throw lettersResult.error;
-
-  const headerRow = headerResult.data;
-  if (headerRow) {
-    headerSettings = {
-      id: headerRow.id,
-      leftLogo: headerRow.left_logo || '',
-      rightLogo: headerRow.right_logo || '',
-      schoolEmail: headerRow.school_email || 'cbd3047@moe.edu.my',
-      note: headerRow.note || '',
-      principalName: headerRow.principal_name || 'JEYAKANTAN PATHMANABAN',
-    };
-  }
-
-  state.teachers = (teachersResult.data || []).map((row) => row.name);
-  state.positions = (positionsResult.data || []).map((row) => row.name);
-  state.letters = {};
-
-  (lettersResult.data || []).forEach((row) => {
-    state.letters[row.teacher_name] = {
-      teacher: row.teacher_name,
-      tarikhSurat: row.tarikh_surat || '',
-      tahunBuku: row.tahun_buku || '',
-      sesiAkademik: row.sesi_akademik || '',
-      tajukSurat: row.tajuk_surat || '',
-      tarikhMula: row.tarikh_mula || '',
-      tarikhHingga: row.tarikh_hingga || '',
-      positions: Array.isArray(row.positions) ? row.positions : [],
-      rujKami: row.ruj_kami || 'CBD3047.100.6/1/3( )',
-    };
-  });
-
-  const anyLetter = Object.values(state.letters)[0];
-  if (anyLetter?.rujKami) {
-    GLOBAL_RUJ = anyLetter.rujKami;
-  }
-}
-
-async function initApp() {
-  try {
-    setButtonsDisabled(true);
-    await seedDefaultsIfNeeded();
-    await loadRemoteData();
-    renderAll();
-    updateLogoPreviews();
-    el('tarikhSurat').value = todayISO();
-    el('tarikhMula').value = todayISO();
-    el('rujKami').value = GLOBAL_RUJ;
-  } catch (error) {
-    showError(error, 'Gagal memuatkan data dari Supabase.');
-  } finally {
-    setButtonsDisabled(false);
-  }
-}
-
 function updateLogoPreviews() {
   const left = el('logoLeftPreview');
   const right = el('logoRightPreview');
@@ -266,39 +168,11 @@ function handleLogoUpload(file, side) {
   reader.readAsDataURL(file);
 }
 
-async function saveHeaderSettings(showAlert = true) {
+function saveHeaderSettings(showAlert = true) {
   headerSettings.schoolEmail = el('schoolEmail').value.trim() || 'cbd3047@moe.edu.my';
   headerSettings.note = el('headerNote').value.trim();
   headerSettings.principalName = el('principalName').value.trim() || 'JEYAKANTAN PATHMANABAN';
-
-  const payload = {
-    school_email: headerSettings.schoolEmail,
-    note: headerSettings.note,
-    principal_name: headerSettings.principalName,
-    left_logo: headerSettings.leftLogo,
-    right_logo: headerSettings.rightLogo,
-    updated_at: new Date().toISOString(),
-  };
-
-  let result;
-  if (headerSettings.id) {
-    result = await supabaseClient
-      .from('header_settings')
-      .update(payload)
-      .eq('id', headerSettings.id)
-      .select()
-      .single();
-  } else {
-    result = await supabaseClient
-      .from('header_settings')
-      .insert(payload)
-      .select()
-      .single();
-  }
-
-  if (result.error) throw result.error;
-
-  headerSettings.id = result.data.id;
+  saveState();
   updateLogoPreviews();
 
   if (showAlert) {
@@ -306,11 +180,10 @@ async function saveHeaderSettings(showAlert = true) {
   }
 }
 
-async function clearHeaderSettings() {
+function clearHeaderSettings() {
   if (!confirm('Padam semua tetapan logo/header?')) return;
 
   headerSettings = {
-    id: headerSettings.id,
     leftLogo: '',
     rightLogo: '',
     schoolEmail: 'cbd3047@moe.edu.my',
@@ -320,7 +193,8 @@ async function clearHeaderSettings() {
 
   el('logoLeftInput').value = '';
   el('logoRightInput').value = '';
-  await saveHeaderSettings(false);
+  saveState();
+  updateLogoPreviews();
   alert('Tetapan header telah direset.');
 }
 
@@ -399,38 +273,20 @@ function renderSelectedTeacherPositions() {
     : '<span class="muted">Belum ada jawatan dipilih.</span>';
 }
 
-async function ensureTeacher(name) {
+function ensureTeacher(name) {
   const clean = (name || '').trim();
-  if (!clean) return '';
-
+  if (!clean) return false;
   if (!state.teachers.includes(clean)) {
-    const { error } = await supabaseClient
-      .from('teachers')
-      .upsert({ name: clean }, { onConflict: 'name' });
-
-    if (error) throw error;
     state.teachers.push(clean);
   }
-
   return clean;
 }
 
-async function ensurePositions(list) {
-  const cleanList = list
-    .map((pos) => String(pos || '').trim())
-    .filter(Boolean);
-
-  if (!cleanList.length) return;
-
-  const { error } = await supabaseClient
-    .from('positions')
-    .upsert(cleanList.map((name) => ({ name })), { onConflict: 'name' });
-
-  if (error) throw error;
-
-  cleanList.forEach((name) => {
-    if (!state.positions.includes(name)) {
-      state.positions.push(name);
+function ensurePositions(list) {
+  list.forEach((pos) => {
+    const clean = String(pos || '').trim();
+    if (clean && !state.positions.includes(clean)) {
+      state.positions.push(clean);
     }
   });
 }
@@ -461,8 +317,6 @@ function fillFormFromRecord(name) {
     return;
   }
 
-  GLOBAL_RUJ = rec.rujKami || GLOBAL_RUJ;
-  el('rujKami').value = GLOBAL_RUJ;
   el('tarikhSurat').value = rec.tarikhSurat || todayISO();
   el('tahunBuku').value = rec.tahunBuku || '';
   el('sesiAkademik').value = rec.sesiAkademik || '';
@@ -473,11 +327,11 @@ function fillFormFromRecord(name) {
   renderSelectedTeacherPositions();
 }
 
-async function saveCurrentRecord() {
+function saveCurrentRecord() {
   let teacher = el('teacherSelect').value;
 
   if (!teacher && el('newTeacherName').value.trim()) {
-    teacher = await ensureTeacher(el('newTeacherName').value.trim());
+    teacher = ensureTeacher(el('newTeacherName').value.trim());
   }
 
   if (!teacher) {
@@ -487,7 +341,7 @@ async function saveCurrentRecord() {
 
   GLOBAL_RUJ = el('rujKami').value.trim() || 'CBD3047.100.6/1/3( )';
 
-  const record = {
+  state.letters[teacher] = {
     teacher,
     tarikhSurat: el('tarikhSurat').value,
     tahunBuku: el('tahunBuku').value.trim(),
@@ -496,30 +350,10 @@ async function saveCurrentRecord() {
     tarikhMula: el('tarikhMula').value,
     tarikhHingga: el('tarikhHingga').value,
     positions: getSelectedPositions(),
-    rujKami: GLOBAL_RUJ,
   };
 
-  await ensureTeacher(teacher);
-  await ensurePositions(record.positions);
-
-  const { error } = await supabaseClient
-    .from('letters')
-    .upsert({
-      teacher_name: record.teacher,
-      tarikh_surat: record.tarikhSurat || null,
-      tahun_buku: record.tahunBuku,
-      sesi_akademik: record.sesiAkademik,
-      tajuk_surat: record.tajukSurat,
-      tarikh_mula: record.tarikhMula || null,
-      tarikh_hingga: record.tarikhHingga || null,
-      ruj_kami: record.rujKami,
-      positions: record.positions,
-      updated_at: new Date().toISOString(),
-    }, { onConflict: 'teacher_name' });
-
-  if (error) throw error;
-
-  state.letters[teacher] = record;
+  ensureTeacher(teacher);
+  saveState();
   renderAll();
   renderTeacherDropdowns(teacher);
   fillFormFromRecord(teacher);
@@ -572,7 +406,7 @@ function generateLetterHTML(rec) {
       <div class="line"></div>
 
       <div class="ref-wrap">
-        <div>Ruj. Kami: ${escapeHtml(rec.rujKami || GLOBAL_RUJ)}</div>
+        <div>Ruj. Kami: ${escapeHtml(GLOBAL_RUJ)}</div>
         <div>Tarikh: ${escapeHtml(formatMalayDate(rec.tarikhSurat))}</div>
       </div>
 
@@ -784,16 +618,12 @@ function renderAll() {
   el('rujKami').value = GLOBAL_RUJ;
 }
 
-async function exportJSON() {
-  const payload = {
-    teachers: state.teachers,
-    positions: state.positions,
-    letters: state.letters,
-    globalRuj: GLOBAL_RUJ,
-    headerSettings,
-  };
+function exportJSON() {
+  const blob = new Blob(
+    [JSON.stringify({ ...state, globalRuj: GLOBAL_RUJ, headerSettings }, null, 2)],
+    { type: 'application/json' }
+  );
 
-  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
   const link = document.createElement('a');
   link.href = URL.createObjectURL(blob);
   link.download = 'data-surat-lantikan-sjkt-kuala-lipis.json';
@@ -801,87 +631,29 @@ async function exportJSON() {
   URL.revokeObjectURL(link.href);
 }
 
-async function importJSON(file) {
+function importJSON(file) {
   const reader = new FileReader();
 
-  reader.onload = async (event) => {
+  reader.onload = (event) => {
     try {
       const data = JSON.parse(event.target.result);
 
-      const teachers = Array.isArray(data.teachers) ? data.teachers : [];
-      const positions = Array.isArray(data.positions) ? data.positions : [];
-      const letters = data.letters && typeof data.letters === 'object' ? data.letters : {};
-      const importedHeader = data.headerSettings && typeof data.headerSettings === 'object' ? data.headerSettings : null;
-      const importedRuj = data.globalRuj && String(data.globalRuj).trim()
-        ? String(data.globalRuj).trim()
-        : 'CBD3047.100.6/1/3( )';
+      state.teachers = Array.isArray(data.teachers) ? data.teachers : [...DEFAULT_TEACHERS];
+      state.positions = Array.isArray(data.positions) ? data.positions : [...DEFAULT_POSITIONS];
+      state.letters = data.letters && typeof data.letters === 'object' ? data.letters : {};
+      GLOBAL_RUJ = (data.globalRuj && String(data.globalRuj).trim()) ? String(data.globalRuj).trim() : 'CBD3047.100.6/1/3( )';
 
-      const deleteLetters = await supabaseClient.from('letters').delete().neq('id', '00000000-0000-0000-0000-000000000000');
-      if (deleteLetters.error) throw deleteLetters.error;
-
-      const deleteTeachers = await supabaseClient.from('teachers').delete().neq('id', '00000000-0000-0000-0000-000000000000');
-      if (deleteTeachers.error) throw deleteTeachers.error;
-
-      const deletePositions = await supabaseClient.from('positions').delete().neq('id', '00000000-0000-0000-0000-000000000000');
-      if (deletePositions.error) throw deletePositions.error;
-
-      if (teachers.length) {
-        const insertTeachers = await supabaseClient
-          .from('teachers')
-          .upsert(teachers.map((name) => ({ name })), { onConflict: 'name' });
-
-        if (insertTeachers.error) throw insertTeachers.error;
+      if (data.headerSettings && typeof data.headerSettings === 'object') {
+        headerSettings = { ...headerSettings, ...data.headerSettings };
       }
 
-      if (positions.length) {
-        const insertPositions = await supabaseClient
-          .from('positions')
-          .upsert(positions.map((name) => ({ name })), { onConflict: 'name' });
-
-        if (insertPositions.error) throw insertPositions.error;
-      }
-
-      const letterRows = Object.values(letters).map((rec) => ({
-        teacher_name: rec.teacher,
-        tarikh_surat: rec.tarikhSurat || null,
-        tahun_buku: rec.tahunBuku || '',
-        sesi_akademik: rec.sesiAkademik || '',
-        tajuk_surat: rec.tajukSurat || '',
-        tarikh_mula: rec.tarikhMula || null,
-        tarikh_hingga: rec.tarikhHingga || null,
-        ruj_kami: rec.rujKami || importedRuj,
-        positions: Array.isArray(rec.positions) ? rec.positions : [],
-        updated_at: new Date().toISOString(),
-      }));
-
-      if (letterRows.length) {
-        const insertLetters = await supabaseClient
-          .from('letters')
-          .upsert(letterRows, { onConflict: 'teacher_name' });
-
-        if (insertLetters.error) throw insertLetters.error;
-      }
-
-      if (importedHeader) {
-        headerSettings = {
-          ...headerSettings,
-          leftLogo: importedHeader.leftLogo || '',
-          rightLogo: importedHeader.rightLogo || '',
-          schoolEmail: importedHeader.schoolEmail || 'cbd3047@moe.edu.my',
-          note: importedHeader.note || '',
-          principalName: importedHeader.principalName || 'JEYAKANTAN PATHMANABAN',
-        };
-        await saveHeaderSettings(false);
-      }
-
-      GLOBAL_RUJ = importedRuj;
-      await loadRemoteData();
+      saveState();
       renderAll();
       clearForm();
       updateLogoPreviews();
       alert('Import berjaya.');
     } catch (error) {
-      showError(error, 'Fail JSON tidak sah.');
+      alert('Fail JSON tidak sah.');
     }
   };
 
@@ -894,31 +666,14 @@ function editRecord(name) {
 }
 window.editRecord = editRecord;
 
-async function deleteRecord(name) {
+function deleteRecord(name) {
   if (!confirm(`Padam rekod ${name}?`)) return;
 
-  try {
-    const deleteLetter = await supabaseClient
-      .from('letters')
-      .delete()
-      .eq('teacher_name', name);
-
-    if (deleteLetter.error) throw deleteLetter.error;
-
-    const deleteTeacher = await supabaseClient
-      .from('teachers')
-      .delete()
-      .eq('name', name);
-
-    if (deleteTeacher.error) throw deleteTeacher.error;
-
-    delete state.letters[name];
-    state.teachers = state.teachers.filter((teacher) => teacher !== name);
-    renderAll();
-    clearForm();
-  } catch (error) {
-    showError(error, 'Gagal memadam rekod.');
-  }
+  delete state.letters[name];
+  state.teachers = state.teachers.filter((teacher) => teacher !== name);
+  saveState();
+  renderAll();
+  clearForm();
 }
 window.deleteRecord = deleteRecord;
 
@@ -928,80 +683,51 @@ document.querySelectorAll('.tab-btn').forEach((btn) => {
 
 el('logoLeftInput').addEventListener('change', (event) => handleLogoUpload(event.target.files[0], 'leftLogo'));
 el('logoRightInput').addEventListener('change', (event) => handleLogoUpload(event.target.files[0], 'rightLogo'));
+el('saveLogoSettingsBtn').addEventListener('click', () => saveHeaderSettings(true));
+el('clearLogoSettingsBtn').addEventListener('click', clearHeaderSettings);
 
-el('saveLogoSettingsBtn').addEventListener('click', async () => {
-  try {
-    await saveHeaderSettings(true);
-  } catch (error) {
-    showError(error, 'Gagal menyimpan tetapan header.');
+el('addTeacherBtn').addEventListener('click', () => {
+  const name = el('newTeacherName').value.trim();
+
+  if (!name) {
+    alert('Sila taip nama guru.');
+    return;
   }
+
+  ensureTeacher(name);
+  saveState();
+  renderAll();
+  renderTeacherDropdowns(name);
+  el('newTeacherName').value = '';
+  alert('Nama guru berjaya ditambah.');
 });
 
-el('clearLogoSettingsBtn').addEventListener('click', async () => {
-  try {
-    await clearHeaderSettings();
-  } catch (error) {
-    showError(error, 'Gagal reset tetapan header.');
+el('addPositionBtn').addEventListener('click', () => {
+  const lines = el('newPositionText').value
+    .split(/\n+/)
+    .map((value) => value.trim())
+    .filter(Boolean);
+
+  if (!lines.length) {
+    alert('Sila masukkan sekurang-kurangnya satu jawatan.');
+    return;
   }
-});
 
-el('addTeacherBtn').addEventListener('click', async () => {
-  try {
-    const name = el('newTeacherName').value.trim();
-
-    if (!name) {
-      alert('Sila taip nama guru.');
-      return;
-    }
-
-    await ensureTeacher(name);
-    state.teachers = [...new Set([...state.teachers, name])].sort();
-    renderAll();
-    renderTeacherDropdowns(name);
-    el('newTeacherName').value = '';
-    alert('Nama guru berjaya ditambah.');
-  } catch (error) {
-    showError(error, 'Gagal menambah guru.');
-  }
-});
-
-el('addPositionBtn').addEventListener('click', async () => {
-  try {
-    const lines = el('newPositionText').value
-      .split(/\n+/)
-      .map((value) => value.trim())
-      .filter(Boolean);
-
-    if (!lines.length) {
-      alert('Sila masukkan sekurang-kurangnya satu jawatan.');
-      return;
-    }
-
-    const previouslySelected = getSelectedPositions();
-    await ensurePositions(lines);
-    state.positions = [...new Set(state.positions)].sort();
-    renderPositions([...new Set([...previouslySelected, ...lines])]);
-    el('newPositionText').value = '';
-    renderSelectedTeacherPositions();
-  } catch (error) {
-    showError(error, 'Gagal menambah jawatan.');
-  }
+  const previouslySelected = getSelectedPositions();
+  ensurePositions(lines);
+  saveState();
+  renderPositions([...new Set([...previouslySelected, ...lines])]);
+  el('newPositionText').value = '';
+  renderSelectedTeacherPositions();
 });
 
 el('selectAllPositionsBtn').addEventListener('click', selectAllPositions);
 el('clearAllPositionsBtn').addEventListener('click', clearAllPositions);
 
 el('teacherSelect').addEventListener('change', (event) => fillFormFromRecord(event.target.value));
-
-el('saveAssignmentBtn').addEventListener('click', async () => {
-  try {
-    await saveCurrentRecord();
-  } catch (error) {
-    showError(error, 'Gagal menyimpan rekod guru.');
-  }
-});
-
+el('saveAssignmentBtn').addEventListener('click', saveCurrentRecord);
 el('resetFormBtn').addEventListener('click', () => clearForm());
+
 el('searchTeacher').addEventListener('input', renderTable);
 el('exportJsonBtn').addEventListener('click', exportJSON);
 
@@ -1014,62 +740,52 @@ el('importJsonInput').addEventListener('change', (event) => {
 
 el('rujKami').addEventListener('input', () => {
   GLOBAL_RUJ = el('rujKami').value.trim() || 'CBD3047.100.6/1/3( )';
+  saveState();
 });
 
-el('previewOneBtn').addEventListener('click', async () => {
-  try {
-    const name = el('printTeacherSelect').value;
-    if (!name || !state.letters[name]) {
-      alert('Sila pilih guru yang mempunyai rekod.');
-      return;
-    }
-    await saveHeaderSettings(false);
-    openPreview([state.letters[name]], false);
-  } catch (error) {
-    showError(error, 'Gagal membuka preview.');
+el('previewOneBtn').addEventListener('click', () => {
+  const name = el('printTeacherSelect').value;
+  if (!name || !state.letters[name]) {
+    alert('Sila pilih guru yang mempunyai rekod.');
+    return;
   }
+  saveHeaderSettings(false);
+  openPreview([state.letters[name]], false);
 });
 
-el('printOneBtn').addEventListener('click', async () => {
-  try {
-    const name = el('printTeacherSelect').value;
-    if (!name || !state.letters[name]) {
-      alert('Sila pilih guru yang mempunyai rekod.');
-      return;
-    }
-    await saveHeaderSettings(false);
-    openPreview([state.letters[name]], true);
-  } catch (error) {
-    showError(error, 'Gagal mencetak surat.');
+el('printOneBtn').addEventListener('click', () => {
+  const name = el('printTeacherSelect').value;
+  if (!name || !state.letters[name]) {
+    alert('Sila pilih guru yang mempunyai rekod.');
+    return;
   }
+  saveHeaderSettings(false);
+  openPreview([state.letters[name]], true);
 });
 
-el('previewAllBtn').addEventListener('click', async () => {
-  try {
-    const records = [...state.teachers]
-      .sort()
-      .map((name) => state.letters[name])
-      .filter(Boolean);
+el('previewAllBtn').addEventListener('click', () => {
+  const records = [...state.teachers]
+    .sort()
+    .map((name) => state.letters[name])
+    .filter(Boolean);
 
-    await saveHeaderSettings(false);
-    openPreview(records, false);
-  } catch (error) {
-    showError(error, 'Gagal preview semua surat.');
-  }
+  saveHeaderSettings(false);
+  openPreview(records, false);
 });
 
-el('printAllBtn').addEventListener('click', async () => {
-  try {
-    const records = [...state.teachers]
-      .sort()
-      .map((name) => state.letters[name])
-      .filter(Boolean);
+el('printAllBtn').addEventListener('click', () => {
+  const records = [...state.teachers]
+    .sort()
+    .map((name) => state.letters[name])
+    .filter(Boolean);
 
-    await saveHeaderSettings(false);
-    openPreview(records, true);
-  } catch (error) {
-    showError(error, 'Gagal mencetak semua surat.');
-  }
+  saveHeaderSettings(false);
+  openPreview(records, true);
 });
 
-initApp();
+loadState();
+renderAll();
+updateLogoPreviews();
+el('tarikhSurat').value = todayISO();
+el('tarikhMula').value = todayISO();
+el('rujKami').value = GLOBAL_RUJ;
