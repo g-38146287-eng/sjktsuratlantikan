@@ -5,378 +5,67 @@
 \paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\f0\fs24 \cf0 <!-- /index.html -->\
-<!doctype html>\
-<html lang="ms">\
-<head>\
-  <meta charset="UTF-8" />\
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />\
-  <title>Sistem Surat Lantikan Kurikulum & Pentadbiran - SJKT Kuala Lipis</title>\
-  <link rel="stylesheet" href="style.css" />\
-</head>\
-<body>\
-  <div class="app">\
-    <div class="topbar">\
-      <h1>Sistem Surat Lantikan Kurikulum & Pentadbiran</h1>\
-      <p>SJKT Kuala Lipis \'95 Tetapan logo sekolah, isi data guru, tetapkan jawatan, semak semula, buka preview surat di tab baru, dan cetak satu-satu atau semua sekali.</p>\
-    </div>\
-\
-    <div class="notice">\
-      <strong>Makluman:</strong> Kod ini telah dikemaskini dengan nama Guru Besar dalam tetapan header, pemilihan jawatan menggunakan checkbox grid, dan butang Select All / Clear All.\
-    </div>\
-\
-    <div class="tabs">\
-      <button class="tab-btn active" data-tab="tab0">Tab 0 \'95 Logo & Tetapan</button>\
-      <button class="tab-btn" data-tab="tab1">Tab 1 \'95 Isi Jawatan Guru</button>\
-      <button class="tab-btn" data-tab="tab2">Tab 2 \'95 Semak / Kemaskini / Delete</button>\
-      <button class="tab-btn" data-tab="tab3">Tab 3 \'95 Senarai Guru & Cetakan</button>\
-    </div>\
-\
-    <section class="panel active" id="tab0">\
-      <div class="subcard">\
-        <h3>Upload logo sekolah / lambang</h3>\
-        <div class="grid">\
-          <div class="field col-6">\
-            <label>Logo kiri (Jata Malaysia)</label>\
-            <input type="file" id="logoLeftInput" accept="image/png,image/jpeg,image/webp,image/jpg">\
-            <div class="help">Upload sekali sahaja. Disimpan dalam browser ini.</div>\
-          </div>\
-          <div class="field col-6">\
-            <label>Logo kanan (Logo sekolah)</label>\
-            <input type="file" id="logoRightInput" accept="image/png,image/jpeg,image/webp,image/jpg">\
-            <div class="help">Upload sekali sahaja. Disimpan dalam browser ini.</div>\
-          </div>\
-          <div class="field col-4">\
-            <label>Email sekolah header</label>\
-            <input type="text" id="schoolEmail" value="cbd3047@moe.edu.my" />\
-          </div>\
-          <div class="field col-4">\
-            <label>Nota header (pilihan)</label>\
-            <input type="text" id="headerNote" placeholder="Pilihan sahaja" />\
-          </div>\
-          <div class="field col-4">\
-            <label>Nama Guru Besar</label>\
-            <input type="text" id="principalName" value="JEYAKANTAN PATHMANABAN" />\
-          </div>\
-        </div>\
-\
-        <div class="logo-preview-wrap">\
-          <div class="logo-box-ui">\
-            <div><strong>Preview logo kiri</strong></div>\
-            <img id="logoLeftPreview" alt="Logo kiri" />\
-          </div>\
-          <div class="logo-box-ui">\
-            <div><strong>Preview logo kanan</strong></div>\
-            <img id="logoRightPreview" alt="Logo kanan" />\
-          </div>\
-        </div>\
-\
-        <div class="actions">\
-          <button class="primary" type="button" id="saveLogoSettingsBtn">Simpan Tetapan Header</button>\
-          <button class="secondary" type="button" id="clearLogoSettingsBtn">Padam Logo / Reset Header</button>\
-        </div>\
-      </div>\
-    </section>\
-\
-    <section class="panel" id="tab1">\
-      <div class="grid">\
-        <div class="field col-6">\
-          <label>Pilih nama guru</label>\
-          <select id="teacherSelect"></select>\
-        </div>\
-\
-        <div class="field col-6">\
-          <label>Atau taip nama guru baru</label>\
-          <div class="inline">\
-            <input id="newTeacherName" placeholder="Contoh: Pn. Nitya Sree A/P Dorai Singam" />\
-            <button class="success" id="addTeacherBtn" type="button">Tambah Guru</button>\
-          </div>\
-        </div>\
-\
-        <div class="field col-3">\
-          <label>Ruj. Kami</label>\
-          <input id="rujKami" value="CBD3047.100.6/1/3( )" />\
-        </div>\
-\
-        <div class="field col-3">\
-          <label>Tarikh surat</label>\
-          <input id="tarikhSurat" type="date" />\
-        </div>\
-\
-        <div class="field col-3">\
-          <label>Tahun buku pengurusan</label>\
-          <input id="tahunBuku" placeholder="Contoh: 2026/2027" />\
-        </div>\
-\
-        <div class="field col-3">\
-          <label>Sesi akademik</label>\
-          <input id="sesiAkademik" placeholder="Contoh: 2026/2027" />\
-        </div>\
-\
-        <div class="field col-6">\
-          <label>Tajuk surat</label>\
-          <input id="tajukSurat" value="PERLANTIKAN SEBAGAI JAWATANKUASA UNIT PENGURUSAN KURIKULUM DAN PENTADBIRAN SEKOLAH JENIS KEBANGSAAN (TAMIL) KUALA LIPIS" />\
-        </div>\
-\
-        <div class="field col-3">\
-          <label>Tarikh berkuat kuasa mulai</label>\
-          <input id="tarikhMula" type="date" />\
-        </div>\
-\
-        <div class="field col-3">\
-          <label>Tarikh berkuat kuasa hingga</label>\
-          <input id="tarikhHingga" type="date" />\
-        </div>\
-\
-        <div class="field col-8">\
-          <label>Pilih jawatan yang dipegang guru (boleh pilih banyak)</label>\
-          <div class="inline checkbox-actions">\
-            <button class="ghost" type="button" id="selectAllPositionsBtn">Select All</button>\
-            <button class="secondary" type="button" id="clearAllPositionsBtn">Clear All</button>\
-          </div>\
-          <div id="positionCheckboxContainer" class="checkbox-grid"></div>\
-          <div class="small muted">Tick checkbox untuk pilih banyak jawatan.</div>\
-        </div>\
-\
-        <div class="field col-4">\
-          <label>Tambah jawatan baru</label>\
-          <textarea id="newPositionText" placeholder="Taip satu jawatan bagi setiap baris&#10;Contoh:&#10;Penyelaras PBD&#10;AJK Jadual Waktu"></textarea>\
-          <div class="actions">\
-            <button class="success" type="button" id="addPositionBtn">Tambah ke Senarai Jawatan</button>\
-          </div>\
-        </div>\
-      </div>\
-\
-      <div class="actions">\
-        <button class="primary" type="button" id="saveAssignmentBtn">Simpan / Kemaskini Rekod Guru</button>\
-        <button class="secondary" type="button" id="resetFormBtn">Reset Borang</button>\
-      </div>\
-\
-      <div class="subcard">\
-        <h3>Jawatan guru yang dipilih</h3>\
-        <div id="selectedTeacherPositions" class="muted">Belum ada data dipilih.</div>\
-      </div>\
-    </section>\
-\
-    <section class="panel" id="tab2">\
-      <div class="toolbar">\
-        <div style="min-width:260px;flex:1;">\
-          <label>Cari nama guru</label>\
-          <input id="searchTeacher" placeholder="Taip nama guru..." />\
-        </div>\
-        <div class="count-box" id="recordCount">0 rekod</div>\
-        <button class="secondary" type="button" id="exportJsonBtn">Export Data JSON</button>\
-        <label class="secondary import-label">\
-          Import Data JSON\
-          <input type="file" id="importJsonInput" accept="application/json" hidden>\
-        </label>\
-      </div>\
-\
-      <div class="table-wrap">\
-        <table>\
-          <thead>\
-            <tr>\
-              <th style="width:60px;">Bil.</th>\
-              <th>Nama Guru</th>\
-              <th>Jawatan</th>\
-              <th style="width:120px;">Tahun</th>\
-              <th style="width:160px;">Tarikh Kuat Kuasa</th>\
-              <th style="width:180px;">Tindakan</th>\
-            </tr>\
-          </thead>\
-          <tbody id="recordTableBody"></tbody>\
-        </table>\
-      </div>\
-    </section>\
-\
-    <section class="panel" id="tab3">\
-      <div class="toolbar">\
-        <div style="min-width:260px;flex:1;">\
-          <label>Pilih guru untuk preview / cetak</label>\
-          <select id="printTeacherSelect"></select>\
-        </div>\
-        <button class="primary" type="button" id="previewOneBtn">Preview di Tab Baru</button>\
-        <button class="secondary" type="button" id="printOneBtn">Cetak Guru Ini</button>\
-        <button class="success" type="button" id="previewAllBtn">Preview Semua</button>\
-        <button class="ghost" type="button" id="printAllBtn">Cetak Semua</button>\
-      </div>\
-\
-      <div class="subcard">\
-        <h3>Senarai nama guru yang telah diisi</h3>\
-        <div id="teacherListView"></div>\
-      </div>\
-    </section>\
-  </div>\
-\
-  <script src="app.js"></script>\
-</body>\
-</html>\
-\
-<!-- /style.css -->\
-:root\{\
-  --brand:#0f4c81;\
-  --brand2:#1f6fb2;\
-  --bg:#f4f7fb;\
-  --card:#ffffff;\
-  --text:#1f2937;\
-  --muted:#6b7280;\
-  --line:#d1d5db;\
-  --ok:#166534;\
-  --danger:#b91c1c;\
-  --shadow:0 10px 30px rgba(15,76,129,.08);\
-\}\
-\
-*\{box-sizing:border-box\}\
-html,body\{margin:0;padding:0\}\
-body\{font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)\}\
-.app\{max-width:1400px;margin:0 auto;padding:20px\}\
-.topbar\{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;border-radius:18px;padding:22px 24px;box-shadow:var(--shadow);margin-bottom:18px\}\
-.topbar h1\{margin:0 0 8px;font-size:28px\}\
-.topbar p\{margin:0;opacity:.95;line-height:1.5\}\
-.notice\{background:#fff7ed;border:1px solid #fdba74;color:#9a3412;padding:14px 16px;border-radius:12px;margin:16px 0 18px;line-height:1.5\}\
-.tabs\{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px\}\
-.tab-btn\{border:none;background:#dbeafe;color:#1e3a8a;padding:12px 16px;border-radius:12px;cursor:pointer;font-weight:700\}\
-.tab-btn.active\{background:var(--brand);color:#fff\}\
-.panel\{display:none;background:var(--card);border-radius:18px;padding:20px;box-shadow:var(--shadow)\}\
-.panel.active\{display:block\}\
-.grid\{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:14px\}\
-.field\{grid-column:span 12\}\
-.field.col-6\{grid-column:span 6\}\
-.field.col-4\{grid-column:span 4\}\
-.field.col-3\{grid-column:span 3\}\
-.field.col-8\{grid-column:span 8\}\
-.field label\{display:block;font-weight:700;margin-bottom:6px\}\
-input,select,textarea\{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;font-size:14px;background:#fff\}\
-textarea\{min-height:90px;resize:vertical\}\
-.actions\{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px\}\
-button\{border:none;border-radius:10px;padding:11px 14px;cursor:pointer;font-weight:700\}\
-.primary\{background:var(--brand);color:#fff\}\
-.secondary\{background:#e5e7eb;color:#111827\}\
-.success\{background:#dcfce7;color:var(--ok)\}\
-.danger\{background:#fee2e2;color:var(--danger)\}\
-.ghost\{background:#eff6ff;color:#1d4ed8\}\
-.subcard\{background:#f8fafc;border:1px solid #e5e7eb;border-radius:14px;padding:16px;margin-top:14px\}\
-.subcard h3\{margin:0 0 10px\}\
-.inline\{display:flex;gap:10px;align-items:center;flex-wrap:wrap\}\
-.pill\{display:inline-block;white-space:nowrap;background:#dbeafe;color:#1d4ed8;padding:6px 10px;border-radius:999px;font-size:12px;margin:4px 6px 0 0;font-weight:700\}\
-table\{width:100%;border-collapse:collapse;margin-top:12px;background:#fff\}\
-th,td\{border:1px solid #e5e7eb;padding:10px;text-align:left;vertical-align:top;font-size:14px;word-break:break-word;max-width:300px\}\
-th\{background:#eff6ff\}\
-.muted\{color:var(--muted)\}\
-.toolbar\{display:flex;gap:10px;flex-wrap:wrap;align-items:end;margin-bottom:10px\}\
-.count-box\{background:#eff6ff;padding:10px 14px;border-radius:10px;color:#1e40af;font-weight:700\}\
-.small\{font-size:12px\}\
-.logo-preview-wrap\{display:flex;gap:20px;flex-wrap:wrap;margin-top:10px\}\
-.logo-box-ui\{border:1px solid #d1d5db;border-radius:12px;padding:12px;background:#fff;min-width:220px\}\
-.logo-box-ui img\{max-width:120px;max-height:120px;display:block;margin-top:10px;object-fit:contain;background:#fff;border:1px solid #f0f0f0\}\
-.help\{font-size:12px;color:var(--muted);margin-top:6px\}\
-.table-wrap\{overflow:auto\}\
-.import-label\{display:inline-flex;align-items:center;gap:8px;padding:11px 14px;cursor:pointer\}\
-.checkbox-actions\{margin:0 0 10px 0\}\
-\
-.position-item\{\
-  display:block;\
-  padding:8px 12px;\
-  font-size:14px;\
-  border-radius:8px;\
-  margin-bottom:6px;\
-  background:#fff;\
-  border:1px solid #e5e7eb;\
-  transition:all 0.2s;\
-\}\
-.position-item:hover\{\
-  background:#f0f9ff;\
-  border-color:#3b82f6;\
-\}\
-.position-item input[type="checkbox"]\{\
-  width:auto;\
-  margin-right:10px;\
-  transform:scale(1.2);\
-  cursor:pointer;\
-\}\
-.position-item label\{\
-  cursor:pointer;\
-  user-select:none;\
-  display:inline;\
-  font-weight:400;\
-\}\
-.checkbox-grid\{\
-  display:grid;\
-  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));\
-  gap:8px;\
-  max-height:400px;\
-  overflow-y:auto;\
-  padding:10px;\
-  background:#f9fafb;\
-  border-radius:10px;\
-  border:1px solid #e5e7eb;\
-\}\
-\
-@media (max-width:900px)\{\
-  .field.col-6,.field.col-4,.field.col-3,.field.col-8\{grid-column:span 12\}\
-\}\
-\
-<!-- /app.js -->\
+\f0\fs24 \cf0 // /app.js\
 const STORAGE_KEY = 'sjkt_kuala_lipis_surat_lantikan_final_v6';\
 const GLOBAL_RUJ_KEY = 'sjkt_kuala_lipis_global_ruj_v6';\
 const HEADER_SETTINGS_KEY = 'sjkt_kuala_lipis_header_settings_v6';\
 \
 const DEFAULT_TEACHERS = [\
-  "Pn. Nitya Sree A/P Dorai Singam",\
-  "Pn. Yogeshwary A/P Subramaniam",\
-  "Pn. Vejayah A/P Muthiah",\
-  "Cik. Indirani A/P Subramaniam",\
-  "Cik. P Thilagaavaty A/P Perumal",\
-  "En. Mohd Heilmie Bin Hasim",\
-  "Cik. Loggana A/P Assokumar",\
-  "Pn. Kanchanaah A/P Rajenthiran",\
-  "En. Palaganesh A/L Rajendran",\
-  "Pn. Moganambal Selvi A/P Kunasigaran"\
+  'Pn. Nitya Sree A/P Dorai Singam',\
+  'Pn. Yogeshwary A/P Subramaniam',\
+  'Pn. Vejayah A/P Muthiah',\
+  'Cik. Indirani A/P Subramaniam',\
+  'Cik. P Thilagaavaty A/P Perumal',\
+  'En. Mohd Heilmie Bin Hasim',\
+  'Cik. Loggana A/P Assokumar',\
+  'Pn. Kanchanaah A/P Rajenthiran',\
+  'En. Palaganesh A/L Rajendran',\
+  'Pn. Moganambal Selvi A/P Kunasigaran',\
 ];\
 \
 const DEFAULT_POSITIONS = [\
-  "Guru Data & Maklumat Sekolah (EMIS)",\
-  "Guru ICT / Penyelaras Bestari",\
-  "Guru Perpustakaan & Media (GPM)",\
-  "Penyelaras Latihan Dalam Perkhidmatan (LDP / CPD)",\
-  "Penyelaras SKPM Kualiti@Sekolah",\
-  "Pegawai Aset Sekolah",\
-  "Pegawai Pemeriksa Aset & Pelupusan",\
-  "Penyelaras Program Transformasi Sekolah 2025 (TS25)",\
-  "Penyelaras Kajian Tindakan & Inovasi",\
-  "Setiausaha Kurikulum",\
-  "Setiausaha Peperiksaan Dalaman",\
-  "Penyelaras Pentaksiran Berasaskan Sekolah (PBS)",\
-  "Penyelaras Pentaksiran Bilik Darjah (PBD)",\
-  "Penyelaras Jadual Waktu & Guru Ganti",\
-  "Ketua Panitia Mata Pelajaran (BM, BI, Matematik, Sains, dll.)",\
-  "Penyelaras Program NILAM",\
-  "Penyelaras Pemulihan Khas & ProPIM",\
-  "Penyelaras KBAT & i-THINK",\
-  "Penyelaras STEM",\
-  "Penyelaras Pembangunan Profesionalisme Guru (Professional Learning Community- PLC)",\
-  "Penyelaras MBMMBI (Memartabatkan Bahasa Malaysia Memperkukuh Bahasa Inggeris)",\
-  "Penyelaras Program Highly Immersive Programme (HIP)",\
-  "Penyelaras Program Literasi dan Numerasi (PLaN)",\
-  "Ketua Panitia Bahasa Melayu",\
-  "Ketua Panitia Bahasa Tamil",\
-  "Ketua Panitia Bahasa Inggeris",\
-  "Ketua Panitia Matematik",\
-  "Ketua Panitia Sains",\
-  "Ketua Panitia Pendidikan Moral",\
-  "Ketua Panitia Sejarah",\
-  "Ketua Panitia Reka Bentuk dan Teknologi (RBT)",\
-  "Ketua Panitia Pendidikan Seni Visual",\
-  "Ketua Panitia Pendidikan Muzik",\
-  "Ketua Panitia Teknologi Maklumat dan Komunikasi (TMK)",\
-  "Ketua Panitia Pendidikan Jasmani dan Kesihatan (PJK)",\
-  "Guru Prasekolah",\
-  "Guru Kelas Tahun 1",\
-  "Guru Kelas Tahun 2",\
-  "Guru Kelas Tahun 3",\
-  "Guru Kelas Tahun 4",\
-  "Guru Kelas Tahun 5",\
-  "Guru Kelas Tahun 6"\
+  'Guru Data & Maklumat Sekolah (EMIS)',\
+  'Guru ICT / Penyelaras Bestari',\
+  'Guru Perpustakaan & Media (GPM)',\
+  'Penyelaras Latihan Dalam Perkhidmatan (LDP / CPD)',\
+  'Penyelaras SKPM Kualiti@Sekolah',\
+  'Pegawai Aset Sekolah',\
+  'Pegawai Pemeriksa Aset & Pelupusan',\
+  'Penyelaras Program Transformasi Sekolah 2025 (TS25)',\
+  'Penyelaras Kajian Tindakan & Inovasi',\
+  'Setiausaha Kurikulum',\
+  'Setiausaha Peperiksaan Dalaman',\
+  'Penyelaras Pentaksiran Berasaskan Sekolah (PBS)',\
+  'Penyelaras Pentaksiran Bilik Darjah (PBD)',\
+  'Penyelaras Jadual Waktu & Guru Ganti',\
+  'Ketua Panitia Mata Pelajaran (BM, BI, Matematik, Sains, dll.)',\
+  'Penyelaras Program NILAM',\
+  'Penyelaras Pemulihan Khas & ProPIM',\
+  'Penyelaras KBAT & i-THINK',\
+  'Penyelaras STEM',\
+  'Penyelaras Pembangunan Profesionalisme Guru (Professional Learning Community- PLC)',\
+  'Penyelaras MBMMBI (Memartabatkan Bahasa Malaysia Memperkukuh Bahasa Inggeris)',\
+  'Penyelaras Program Highly Immersive Programme (HIP)',\
+  'Penyelaras Program Literasi dan Numerasi (PLaN)',\
+  'Ketua Panitia Bahasa Melayu',\
+  'Ketua Panitia Bahasa Tamil',\
+  'Ketua Panitia Bahasa Inggeris',\
+  'Ketua Panitia Matematik',\
+  'Ketua Panitia Sains',\
+  'Ketua Panitia Pendidikan Moral',\
+  'Ketua Panitia Sejarah',\
+  'Ketua Panitia Reka Bentuk dan Teknologi (RBT)',\
+  'Ketua Panitia Pendidikan Seni Visual',\
+  'Ketua Panitia Pendidikan Muzik',\
+  'Ketua Panitia Teknologi Maklumat dan Komunikasi (TMK)',\
+  'Ketua Panitia Pendidikan Jasmani dan Kesihatan (PJK)',\
+  'Guru Prasekolah',\
+  'Guru Kelas Tahun 1',\
+  'Guru Kelas Tahun 2',\
+  'Guru Kelas Tahun 3',\
+  'Guru Kelas Tahun 4',\
+  'Guru Kelas Tahun 5',\
+  'Guru Kelas Tahun 6',\
 ];\
 \
 let GLOBAL_RUJ = 'CBD3047.100.6/1/3( )';\
@@ -386,13 +75,13 @@ let headerSettings = \{\
   rightLogo: '',\
   schoolEmail: 'cbd3047@moe.edu.my',\
   note: '',\
-  principalName: 'JEYAKANTAN PATHMANABAN'\
+  principalName: 'JEYAKANTAN PATHMANABAN',\
 \};\
 \
 const state = \{\
   teachers: [],\
   positions: [],\
-  letters: \{\}\
+  letters: \{\},\
 \};\
 \
 const el = (id) => document.getElementById(id);\
@@ -506,9 +195,11 @@ function clearHeaderSettings() \{\
     rightLogo: '',\
     schoolEmail: 'cbd3047@moe.edu.my',\
     note: '',\
-    principalName: 'JEYAKANTAN PATHMANABAN'\
+    principalName: 'JEYAKANTAN PATHMANABAN',\
   \};\
 \
+  el('logoLeftInput').value = '';\
+  el('logoRightInput').value = '';\
   saveState();\
   updateLogoPreviews();\
   alert('Tetapan header telah direset.');\
@@ -545,14 +236,6 @@ function getSelectedPositions() \{\
   return getPositionCheckboxes()\
     .filter((checkbox) => checkbox.checked)\
     .map((checkbox) => checkbox.value);\
-\}\
-\
-function setSelectedPositions(positions) \{\
-  const selected = new Set(positions);\
-  getPositionCheckboxes().forEach((checkbox) => \{\
-    checkbox.checked = selected.has(checkbox.value);\
-  \});\
-  renderSelectedTeacherPositions();\
 \}\
 \
 function renderPositions(selectedPositions) \{\
@@ -673,7 +356,7 @@ function saveCurrentRecord() \{\
     tajukSurat: el('tajukSurat').value.trim(),\
     tarikhMula: el('tarikhMula').value,\
     tarikhHingga: el('tarikhHingga').value,\
-    positions: getSelectedPositions()\
+    positions: getSelectedPositions(),\
   \};\
 \
   ensureTeacher(teacher);\
@@ -726,38 +409,49 @@ function generateLetterHTML(rec) \{\
         </div>\
         <div class="logo-right">$\{getRightLogoHTML()\}</div>\
       </div>\
+\
       <div class="line"></div>\
+\
       <div class="ref-wrap">\
         <div>Ruj. Kami: $\{escapeHtml(GLOBAL_RUJ)\}</div>\
         <div>Tarikh: $\{escapeHtml(formatMalayDate(rec.tarikhSurat))\}</div>\
       </div>\
+\
       <div class="recipient">$\{escapeHtml(teacherUpper)\}<br>Sekolah Jenis Kebangsaan Tamil Kuala Lipis<br>27200 Kuala Lipis,<br>Pahang Darul Makmur</div>\
       <div class="tuan">Tuan/Puan,</div>\
       <div class="title">$\{escapeHtml(rec.tajukSurat)\}</div>\
       <div class="para">Dengan segala hormatnya perkara di atas dirujuk.</div>\
+\
       <div class="para numrow">\
         <span class="num-span">2.</span>\
         <span class="numrow-text">Sukacita dimaklumkan bahawa tuan/puan telah dilantik menganggotai jawatankuasa yang terkandung seperti dalam Buku Pengurusan dan Takwim Sekolah :</span>\
       </div>\
+\
       <div class="roman-group">$\{positions\}</div>\
+\
       <div class="para numrow">\
         <span class="num-span">3.</span>\
         <span class="numrow-text">Tugas tuan/puan ini berkuat kuasa mulai sesi akademik $\{escapeHtml(rec.sesiAkademik || '')\}$\{rec.tarikhMula || rec.tarikhHingga ? `, mulai $\{escapeHtml(formatMalayDate(rec.tarikhMula))\}$\{rec.tarikhHingga ? ` hingga $\{escapeHtml(formatMalayDate(rec.tarikhHingga))\}` : ''\}` : ''\} dan tertakluk kepada sebarang perubahan daripada pihak pentadbir sekolah dari semasa ke semasa.</span>\
       </div>\
+\
       <div class="para numrow">\
         <span class="num-span">4.</span>\
         <span class="numrow-text">Tuan/puan dikehendaki melaksanakan semua tugas yang telah ditetapkan dan mematuhi semua peraturan, prosedur yang menjadi KPI (Key Performance Indicator) KPM. Sukacita juga diingatkan bahawa tugas-tugas yang dipertanggungjawabkan adalah merupakan tugas-tugas rasmi dan diuruskan selari dengan visi dan misi sekolah.</span>\
       </div>\
+\
       <div class="para numrow">\
         <span class="num-span">5.</span>\
         <span class="numrow-text">Saya berkeyakinan bahawa tuan/puan mampu melaksanakan tugas dan tanggungjawab yang diamanahkan berdasarkan kebolehan, keupayaan, minat dan komitmen yang ditunjukkan selama ini.</span>\
       </div>\
+\
       <div class="sekian">Sekian, terima kasih.</div>\
+\
       <div class="slogan-group">\
         <strong>"MALAYSIA MADANI"</strong><br>\
         <strong>"BERKHIDMAT UNTUK NEGARA"</strong><br>\
         <strong>"TRANSFORMASI PENDIDIKAN PAHANG"</strong>\
       </div>\
+\
       <div class="saya">Saya yang menjalankan amanah,</div>\
       <div class="signature-gap"></div>\
       <div class="signature-line">.....................................................</div>\
@@ -766,6 +460,7 @@ function generateLetterHTML(rec) \{\
         <strong>GURU BESAR</strong><br>\
         SJKT KUALA LIPIS\
       </div>\
+\
       <div class="sk-block">s.k. Fail Pengurusan Kurikulum</div>\
     </div>\
   </div>`;\
@@ -794,7 +489,7 @@ body\{margin:0;background:#e5e7eb;font-family:Arial,sans-serif\}\
 .box\{border:1px solid #000;padding:24px 28px;box-sizing:border-box\}\
 .header\{display:grid;grid-template-columns:90px 1fr 90px;align-items:center;column-gap:18px\}\
 .logo-left,.logo-right\{display:flex;align-items:center;justify-content:center\}\
-.logo-left img,.logo-right img\{width:76px;height:auto;object-fit:contain\}\
+.logo-left img,.logo-right img\{width:88px;height:88px;object-fit:contain\}\
 .header-center\{text-align:center;padding:0 10px\}\
 .kpm\{font-weight:bold;font-size:12.8pt;line-height:1.0;margin:0 0 2px 0\}\
 .school\{font-weight:bold;font-size:11pt;line-height:1.0;margin:0 0 2px 0\}\
@@ -821,39 +516,39 @@ body\{margin:0;background:#e5e7eb;font-family:Arial,sans-serif\}\
 .signature-block\{font-size:10.6pt;line-height:1.0;margin-top:0\}\
 .sk-block\{font-size:8.6pt;line-height:1.0;font-style:italic;margin-top:24px;margin-left:36px\}\
 @media print\{\
-  body\{background:#fff\}\
-  .toolbar\{display:none\}\
-  .sheet\{margin:0;box-shadow:none;max-width:none;padding:0;background:#fff\}\
+ body\{background:#fff\}\
+ .toolbar\{display:none\}\
+ .sheet\{margin:0;box-shadow:none;max-width:none;padding:0;background:#fff\}\
 \}\
 </style>\
 </head>\
 <body>\
 <div class="toolbar">\
-  <button class="btn1" id="btnCetak">Cetak</button>\
-  <button class="btn2" onclick="window.close()">Tutup</button>\
+ <button class="btn1" id="btnCetak">Cetak</button>\
+ <button class="btn2" onclick="window.close()">Tutup</button>\
 </div>\
 $\{pages\}\
 <script>\
 function autoFitPages()\{\
-  document.querySelectorAll('.page').forEach(function(page)\{\
-    let fs=10.6,gap=36,tries=0;\
-    while(page.scrollHeight>1035&&fs>9.5&&tries<16)\{\
-      fs-=0.1;\
-      gap=Math.max(20,gap-2);\
-      page.style.fontSize=fs+'pt';\
-      let sg=page.querySelector('.signature-gap');\
-      if(sg) sg.style.height=gap+'px';\
-      tries++;\
-    \}\
-  \});\
+ document.querySelectorAll('.page').forEach(function(page)\{\
+   let fs=10.6,gap=36,tries=0;\
+   while(page.scrollHeight>1035&&fs>9.5&&tries<16)\{\
+     fs-=0.1;\
+     gap=Math.max(20,gap-2);\
+     page.style.fontSize=fs+'pt';\
+     let sg=page.querySelector('.signature-gap');\
+     if(sg) sg.style.height=gap+'px';\
+     tries++;\
+   \}\
+ \});\
 \}\
 document.getElementById('btnCetak').addEventListener('click',function()\{\
-  window.focus();\
-  setTimeout(function()\{window.print();\},300);\
+ window.focus();\
+ setTimeout(function()\{window.print();\},300);\
 \});\
 window.addEventListener('load',function()\{\
-  autoFitPages();\
-  $\{autoPrint ? 'window.focus();setTimeout(function()\{window.print();\},800);' : ''\}\
+ autoFitPages();\
+ $\{autoPrint ? 'setTimeout(function()\{window.print();\},500);' : ''\}\
 \});\
 <\\/script>\
 </body>\
@@ -949,6 +644,7 @@ function importJSON(file) \{\
   reader.onload = (event) => \{\
     try \{\
       const data = JSON.parse(event.target.result);\
+\
       state.teachers = Array.isArray(data.teachers) ? data.teachers : [...DEFAULT_TEACHERS];\
       state.positions = Array.isArray(data.positions) ? data.positions : [...DEFAULT_POSITIONS];\
       state.letters = data.letters && typeof data.letters === 'object' ? data.letters : \{\};\
@@ -1028,8 +724,8 @@ el('addPositionBtn').addEventListener('click', () => \{\
   ensurePositions(lines);\
   saveState();\
   renderPositions([...new Set([...previouslySelected, ...lines])]);\
-  renderSelectedTeacherPositions();\
   el('newPositionText').value = '';\
+  renderSelectedTeacherPositions();\
 \});\
 \
 el('selectAllPositionsBtn').addEventListener('click', selectAllPositions);\
