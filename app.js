@@ -1,3 +1,10 @@
+<!-- /index.html -->
+<!-- GANTI bahagian paling bawah fail anda kepada ini -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="app.js"></script>
+</body>
+</html>
+
 <!-- /app.js -->
 const SUPABASE_URL = 'https://bsguhatzcxrxascrjqij.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_DQWcwhp5lYJIOdIXRpJtEA_Ltpq3IUQ';
